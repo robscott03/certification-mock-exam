@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>__TITLE__</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #F2F4F1; --panel: #FFFFFF; --ink: #1D2A2E; --muted: #5B6A6E; --rule: #D5DCD8;
+  --teal: #0F5C63; --teal-soft: #DCEBEA; --amber: #A86B12; --amber-soft: #F6E7CC;
+  --right: #2F7D4F; --right-soft: #DDEFE3; --wrong: #B3412E; --wrong-soft: #F6DFDA;
+  --s1: #6C7A89; --s2: #2F6F8F; --s3: #3F7F5F; --s4: #8A6A2F; --s5: #6E5A8F; --s6: #8F4F4F; --s7: #2F5F6F; --s8: #7A5A3F; --s9: #4F6F3F; --s10: #5F4F6F;
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #141B1D; --panel: #1B2427; --ink: #E4EAE8; --muted: #9AA8AB; --rule: #2E3A3D;
+    --teal: #6FB8BE; --teal-soft: #1F3A3D; --amber: #E0A84E; --amber-soft: #3A2F1C;
+    --right: #6CC08F; --right-soft: #1D3527; --wrong: #E88A78; --wrong-soft: #3D2320;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #141B1D; --panel: #1B2427; --ink: #E4EAE8; --muted: #9AA8AB; --rule: #2E3A3D;
+  --teal: #6FB8BE; --teal-soft: #1F3A3D; --amber: #E0A84E; --amber-soft: #3A2F1C;
+  --right: #6CC08F; --right-soft: #1D3527; --wrong: #E88A78; --wrong-soft: #3D2320;
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+body { margin: 0; min-height: 100%; background: var(--paper); color: var(--ink); font: 16px/1.5 var(--sans); }
+code { font-family: var(--mono); font-size: 0.86em; background: var(--teal-soft); padding: 0.05em 0.3em; border-radius: 3px; overflow-wrap: anywhere; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible, [role="radio"]:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+a { color: var(--teal); }
+
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; align-items: center; gap: 1rem; padding: 0.7rem 1.25rem; background: var(--panel); border-bottom: 1px solid var(--rule); }
+.bar h1 { font: 600 1rem/1.2 var(--sans); margin: 0; flex: 1; min-width: 0; }
+.bar h1 span { display: block; font-weight: 400; color: var(--muted); font-size: 0.85rem; }
+.timer { font: 500 1.35rem/1 var(--mono); font-variant-numeric: tabular-nums; }
+.timer.low { color: var(--wrong); }
+.btn { border: 1px solid var(--rule); background: var(--panel); padding: 0.5rem 0.95rem; border-radius: 6px; }
+.btn.primary { background: var(--teal); border-color: var(--teal); color: var(--panel); font-weight: 600; }
+.btn:disabled { opacity: 0.45; cursor: default; }
+
+.intro { max-width: 40rem; margin: 3rem auto; padding: 0 1.25rem; }
+.intro h2 { font: 500 2.1rem/1.15 var(--serif); margin: 0 0 1rem; }
+.intro p { font-family: var(--serif); font-size: 1.1rem; line-height: 1.6; }
+.intro table { border-collapse: collapse; width: 100%; margin: 1.5rem 0; font-size: 0.95rem; }
+.intro td { padding: 0.4rem 0; border-bottom: 1px solid var(--rule); }
+.intro td:last-child { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+
+.exam { display: grid; grid-template-columns: 17rem minmax(0, 1fr); gap: 2rem; max-width: 72rem; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+.nav { align-self: start; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 4.5rem); }
+.nav-section { margin-bottom: 1rem; padding-left: 0.6rem; border-left: 3px solid var(--band); }
+.nav-section h3 { font: 500 0.8rem/1.3 var(--sans); margin: 0 0 0.4rem; color: var(--muted); }
+.cells { display: flex; flex-wrap: wrap; gap: 4px; }
+.cell { width: 2rem; height: 2rem; border: 1px solid var(--rule); background: var(--panel); border-radius: 4px; font: 500 0.78rem/1 var(--sans); font-variant-numeric: tabular-nums; position: relative; }
+.cell.answered { background: var(--teal-soft); border-color: var(--teal); }
+.cell.current { outline: 2px solid var(--ink); outline-offset: 1px; }
+.cell.flagged::after { content: ""; position: absolute; top: 2px; right: 2px; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
+.legend { font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; }
+
+.q { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 1.75rem 2rem; }
+.q-meta { font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.q-stem { font: 400 1.22rem/1.6 var(--serif); margin: 0 0 1.5rem; max-width: 42rem; }
+.options { display: grid; gap: 0.6rem; }
+.option { display: grid; grid-template-columns: 2rem 1fr; gap: 0.75rem; align-items: start; text-align: left; border: 1px solid var(--rule); background: var(--panel); padding: 0.8rem 1rem; border-radius: 6px; }
+.option .letter { width: 2rem; height: 2rem; display: grid; place-items: center; border: 1px solid var(--rule); border-radius: 50%; font-weight: 600; }
+.option[aria-checked="true"] { border-color: var(--teal); background: var(--teal-soft); }
+.option[aria-checked="true"] .letter { background: var(--teal); color: var(--panel); border-color: var(--teal); }
+.q-actions { display: flex; gap: 0.6rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.q-actions .spacer { flex: 1; }
+.btn.flag[aria-pressed="true"] { background: var(--amber-soft); border-color: var(--amber); }
+.hint { font-size: 0.8rem; color: var(--muted); margin-top: 1rem; }
+
+dialog { border: 1px solid var(--rule); border-radius: 8px; background: var(--panel); color: var(--ink); max-width: 26rem; padding: 1.5rem; }
+dialog::backdrop { background: rgba(20, 27, 29, 0.5); }
+dialog h2 { font: 500 1.3rem/1.3 var(--serif); margin: 0 0 0.5rem; }
+dialog .row { display: flex; gap: 0.6rem; justify-content: flex-end; margin-top: 1.25rem; }
+
+.results { max-width: 52rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+.score { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.score strong { font: 500 4rem/1 var(--serif); font-variant-numeric: tabular-nums; }
+.score span { color: var(--muted); }
+.note { color: var(--muted); font-size: 0.9rem; max-width: 42rem; }
+.breakdown { margin: 2rem 0; display: grid; gap: 0.75rem; }
+.brow { display: grid; grid-template-columns: minmax(0, 1fr) 4.5rem; gap: 0.3rem 1rem; align-items: center; }
+.brow .label { font-size: 0.92rem; }
+.brow .val { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.92rem; }
+.track { grid-column: 1 / -1; height: 6px; background: var(--rule); border-radius: 3px; overflow: hidden; }
+.track i { display: block; height: 100%; background: var(--band); }
+.filter { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 2rem 0 1rem; }
+.filter .btn[aria-pressed="true"] { border-color: var(--ink); font-weight: 600; }
+.review { border: 1px solid var(--rule); border-left: 4px solid var(--status); background: var(--panel); border-radius: 6px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+.review.right { --status: var(--right); }
+.review.wrong { --status: var(--wrong); }
+.review.blank { --status: var(--amber); }
+.review .q-stem { font-size: 1.08rem; margin-bottom: 1rem; }
+.review ol { list-style: none; padding: 0; margin: 0 0 1rem; display: grid; gap: 0.35rem; }
+.review li { display: grid; grid-template-columns: 1.6rem 1fr auto; gap: 0.5rem; padding: 0.4rem 0.6rem; border-radius: 4px; font-size: 0.95rem; }
+.review li.is-answer { background: var(--right-soft); }
+.review li.is-wrong-pick { background: var(--wrong-soft); }
+.review li .tag { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+.why { font-family: var(--serif); font-size: 1.02rem; line-height: 1.6; margin: 0 0 0.75rem; }
+.src { font-size: 0.85rem; display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; }
+.badge { font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 999px; border: 1px solid var(--rule); }
+.badge.checked { border-color: var(--right); color: var(--right); }
+.badge.unchecked { border-color: var(--amber); color: var(--amber); }
+.src a { overflow-wrap: anywhere; }
+[hidden] { display: none !important; }
+
+@media (max-width: 860px) {
+  .exam { grid-template-columns: 1fr; gap: 1rem; }
+  .nav { position: static; }
+  .nav details summary { cursor: pointer; font-weight: 500; padding: 0.4rem 0; }
+  .q { padding: 1.25rem; }
+  .bar h1 span { display: none; }
+}
+@media (min-width: 861px) { .nav details summary { display: none; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="bar">
+  <h1>__TITLE__<span>__SUBTITLE__</span></h1>
+  <div class="timer" id="timer" aria-live="off" hidden>__EXAM_MINUTES__:00</div>
+  <button class="btn primary" id="submitBtn" hidden>Submit exam</button>
+</header>
+
+<main>
+  <section class="intro" id="intro">
+    <h2 id="introHeading"></h2>
+    <p>__INTRO__</p>
+    <p>__PASS_MARK_NOTE__ Your result is shown as a score and a per-section breakdown, not a pass or fail.</p>
+    <table id="introTable"></table>
+    <p class="note">Your answers are saved in this browser, so you can refresh without losing progress.</p>
+    <button class="btn primary" id="startBtn">Start exam</button>
+  </section>
+
+  <section class="exam" id="exam" hidden>
+    <nav class="nav" aria-label="Question navigator">
+      <details id="navDetails" open>
+        <summary>All questions</summary>
+        <div id="navGroups"></div>
+        <p class="legend">Filled: answered. Dot: flagged for review.</p>
+      </details>
+    </nav>
+    <article class="q" id="question" aria-live="polite"></article>
+  </section>
+
+  <section class="results" id="results" hidden></section>
+</main>
+
+<dialog id="confirm">
+  <h2>Submit the exam?</h2>
+  <p id="confirmText"></p>
+  <div class="row">
+    <button class="btn" id="cancelSubmit">Keep working</button>
+    <button class="btn primary" id="confirmSubmit">Submit exam</button>
+  </div>
+</dialog>
+
+<script>
+const SECTIONS = __SECTIONS__;
+const QUESTIONS = __QUESTIONS__;
+const ENCODED_KEY = "__KEY__";
+const EXAM_MINUTES = __EXAM_MINUTES__;
+const EXAM_SECONDS = EXAM_MINUTES * 60;
+const STORAGE_KEY = "__STORAGE_KEY__";
+const LETTERS = __LETTERS__;
+
+const sectionById = Object.fromEntries(SECTIONS.map((s, i) => [s.id, { ...s, band: `var(--s${i + 1})` }]));
+const $ = (id) => document.getElementById(id);
+
+let state = loadState() || { startedAt: null, answers: {}, flags: [], current: 0, submittedAt: null };
+let timerHandle = null;
+let reviewFilter = "all";
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch { return null; }
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { /* storage unavailable: progress lives in memory only */ }
+}
+function decodeKey() {
+  const bytes = Uint8Array.from(atob(ENCODED_KEY), (c) => c.charCodeAt(0));
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+
+function renderIntroTable() {
+  const counts = countBySection();
+  $("introHeading").textContent = `${QUESTIONS.length} questions, ${EXAM_MINUTES} minutes`;
+  $("introTable").innerHTML = SECTIONS.map((s) =>
+    `<tr><td>${s.name}</td><td>${s.weight} · ${counts[s.id]} questions</td></tr>`).join("");
+}
+function countBySection() {
+  const counts = {};
+  QUESTIONS.forEach((q) => { counts[q.section] = (counts[q.section] || 0) + 1; });
+  return counts;
+}
+
+function secondsLeft() {
+  return Math.max(0, EXAM_SECONDS - Math.floor((Date.now() - state.startedAt) / 1000));
+}
+function tick() {
+  const left = secondsLeft();
+  const minutes = String(Math.floor(left / 60)).padStart(2, "0");
+  const seconds = String(left % 60).padStart(2, "0");
+  $("timer").textContent = `${minutes}:${seconds}`;
+  $("timer").classList.toggle("low", left <= 300);
+  if (left === 0) submitExam();
+}
+
+function startExam() {
+  if (!state.startedAt) { state.startedAt = Date.now(); saveState(); }
+  showExam();
+}
+function showExam() {
+  $("intro").hidden = true;
+  $("exam").hidden = false;
+  $("timer").hidden = false;
+  $("submitBtn").hidden = false;
+  if (window.matchMedia("(max-width: 860px)").matches) $("navDetails").open = false;
+  renderNav();
+  renderQuestion();
+  tick();
+  timerHandle = setInterval(tick, 1000);
+}
+
+function renderNav() {
+  $("navGroups").innerHTML = SECTIONS.map((s) => {
+    const cells = [];
+    QUESTIONS.forEach((q, i) => {
+      if (q.section !== s.id) return;
+      const classes = ["cell"];
+      if (state.answers[i] !== undefined) classes.push("answered");
+      if (state.flags.includes(i)) classes.push("flagged");
+      if (state.current === i) classes.push("current");
+      cells.push(`<button class="${classes.join(" ")}" data-go="${i}" aria-label="Question ${i + 1}">${i + 1}</button>`);
+    });
+    return `<div class="nav-section" style="--band:${sectionById[s.id].band}"><h3>${s.name}</h3><div class="cells">${cells.join("")}</div></div>`;
+  }).join("");
+}
+
+function renderQuestion() {
+  const i = state.current;
+  const q = QUESTIONS[i];
+  const section = sectionById[q.section];
+  const picked = state.answers[i];
+  const flagged = state.flags.includes(i);
+  const answeredCount = Object.keys(state.answers).length;
+  $("question").innerHTML = `
+    <div class="q-meta"><span>Question ${i + 1} of ${QUESTIONS.length} · ${section.name}</span><span>${answeredCount} answered</span></div>
+    <p class="q-stem" id="stem">${q.stem}</p>
+    <div class="options" role="radiogroup" aria-labelledby="stem">
+      ${q.options.map((text, o) => `
+        <button class="option" role="radio" aria-checked="${picked === o}" data-pick="${o}">
+          <span class="letter">${LETTERS[o]}</span><span>${text}</span>
+        </button>`).join("")}
+    </div>
+    <div class="q-actions">
+      <button class="btn" data-step="-1" ${i === 0 ? "disabled" : ""}>Previous</button>
+      <button class="btn flag" id="flagBtn" aria-pressed="${flagged}">${flagged ? "Flagged for review" : "Flag for review"}</button>
+      <span class="spacer"></span>
+      <button class="btn primary" data-step="1" ${i === QUESTIONS.length - 1 ? "disabled" : ""}>Next</button>
+    </div>
+    <p class="hint">Keyboard: ${LETTERS[0]}–${LETTERS[LETTERS.length - 1]} to answer, arrow keys to move, F to flag.</p>`;
+}
+
+function pick(option) {
+  state.answers[state.current] = option;
+  saveState(); renderQuestion(); renderNav();
+}
+function go(index) {
+  state.current = Math.min(QUESTIONS.length - 1, Math.max(0, index));
+  saveState(); renderQuestion(); renderNav();
+}
+function toggleFlag() {
+  const i = state.current;
+  state.flags = state.flags.includes(i) ? state.flags.filter((f) => f !== i) : [...state.flags, i];
+  saveState(); renderQuestion(); renderNav();
+}
+
+function openConfirm() {
+  const unanswered = QUESTIONS.length - Object.keys(state.answers).length;
+  const flagged = state.flags.length;
+  const parts = [];
+  parts.push(unanswered ? `${unanswered} question${unanswered === 1 ? " is" : "s are"} unanswered and will be marked wrong.` : "All questions are answered.");
+  if (flagged) parts.push(`${flagged} flagged for review.`);
+  parts.push("You can't change answers after submitting.");
+  $("confirmText").textContent = parts.join(" ");
+  $("confirm").showModal();
+}
+
+function submitExam() {
+  if (!state.submittedAt) { state.submittedAt = Date.now(); saveState(); }
+  clearInterval(timerHandle);
+  if ($("confirm").open) $("confirm").close();
+  showResults();
+}
+
+function showResults() {
+  const key = decodeKey();
+  $("intro").hidden = true;
+  $("exam").hidden = true;
+  $("timer").hidden = true;
+  $("submitBtn").hidden = true;
+  $("results").hidden = false;
+
+  const correct = QUESTIONS.filter((_, i) => state.answers[i] === key[i].answer).length;
+  const pct = Math.round((correct / QUESTIONS.length) * 100);
+  const usedSeconds = Math.min(EXAM_SECONDS, Math.floor((state.submittedAt - state.startedAt) / 1000));
+  const usedMinutes = Math.round(usedSeconds / 60);
+
+  const breakdown = SECTIONS.map((s) => {
+    const indices = QUESTIONS.map((q, i) => (q.section === s.id ? i : -1)).filter((i) => i >= 0);
+    const right = indices.filter((i) => state.answers[i] === key[i].answer).length;
+    const share = Math.round((right / indices.length) * 100);
+    return `<div class="brow" style="--band:${sectionById[s.id].band}">
+      <span class="label">${s.name} <span class="note">(${s.weight} of exam)</span></span>
+      <span class="val">${right} / ${indices.length}</span>
+      <span class="track"><i style="width:${share}%"></i></span></div>`;
+  }).join("");
+
+  $("results").innerHTML = `
+    <div class="score"><strong>${correct} / ${QUESTIONS.length}</strong><span>${pct}% correct · ${usedMinutes} of ${EXAM_MINUTES} minutes used</span></div>
+    <p class="note">__PASS_MARK_NOTE__ This is a raw score. Use the section breakdown to decide what to study next.</p>
+    <div class="breakdown">${breakdown}</div>
+    <p class="note">Each explanation links to the __DOCS_SITE__ page to check. “Checked against docs” means I confirmed the key claim on that page while writing the exam; “Verify in docs” means I did not, so confirm it yourself before relying on it.</p>
+    <div class="filter" role="group" aria-label="Filter questions">
+      <button class="btn" data-filter="all">All</button>
+      <button class="btn" data-filter="wrong">Wrong or unanswered</button>
+      <button class="btn" data-filter="flagged">Flagged</button>
+    </div>
+    <div id="reviewList"></div>
+    <p><button class="btn" id="resetBtn">Clear answers and start again</button></p>`;
+  renderReview(key);
+}
+
+function renderReview(key) {
+  document.querySelectorAll("[data-filter]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.filter === reviewFilter)));
+  const items = QUESTIONS.map((q, i) => {
+    const picked = state.answers[i];
+    const answer = key[i].answer;
+    const status = picked === undefined ? "blank" : picked === answer ? "right" : "wrong";
+    if (reviewFilter === "wrong" && status === "right") return "";
+    if (reviewFilter === "flagged" && !state.flags.includes(i)) return "";
+    const options = q.options.map((text, o) => {
+      const classes = [];
+      const tags = [];
+      if (o === answer) { classes.push("is-answer"); tags.push("Correct answer"); }
+      if (o === picked && o !== answer) { classes.push("is-wrong-pick"); tags.push("Your answer"); }
+      if (o === picked && o === answer) tags.push("Your answer");
+      return `<li class="${classes.join(" ")}"><strong>${LETTERS[o]}</strong><span>${text}</span><span class="tag">${tags.join(" · ")}</span></li>`;
+    }).join("");
+    const verdict = status === "right" ? "Correct" : status === "wrong" ? "Incorrect" : "Not answered";
+    const badge = key[i].checked
+      ? `<span class="badge checked">Checked against docs</span>`
+      : `<span class="badge unchecked">Verify in docs</span>`;
+    return `<article class="review ${status}">
+      <div class="q-meta"><span>Question ${i + 1} · ${sectionById[q.section].name}</span><span>${verdict}${state.flags.includes(i) ? " · flagged" : ""}</span></div>
+      <p class="q-stem">${q.stem}</p>
+      <ol>${options}</ol>
+      <p class="why">${key[i].explanation}</p>
+      <div class="src">${badge}<a href="${key[i].doc}" target="_blank" rel="noopener">${key[i].doc}</a></div>
+    </article>`;
+  }).join("");
+  $("reviewList").innerHTML = items || `<p class="note">No questions match this filter.</p>`;
+}
+
+function resetExam() {
+  state = { startedAt: null, answers: {}, flags: [], current: 0, submittedAt: null };
+  saveState();
+  $("results").hidden = true;
+  $("intro").hidden = false;
+  window.scrollTo(0, 0);
+}
+
+document.addEventListener("click", (event) => {
+  const target = event.target.closest("button");
+  if (!target) return;
+  if (target.dataset.pick !== undefined) pick(Number(target.dataset.pick));
+  else if (target.dataset.step) go(state.current + Number(target.dataset.step));
+  else if (target.dataset.go !== undefined) go(Number(target.dataset.go));
+  else if (target.dataset.filter) { reviewFilter = target.dataset.filter; renderReview(decodeKey()); }
+  else if (target.id === "flagBtn") toggleFlag();
+  else if (target.id === "startBtn") startExam();
+  else if (target.id === "submitBtn") openConfirm();
+  else if (target.id === "cancelSubmit") $("confirm").close();
+  else if (target.id === "confirmSubmit") submitExam();
+  else if (target.id === "resetBtn") resetExam();
+});
+
+document.addEventListener("keydown", (event) => {
+  if ($("exam").hidden || $("confirm").open || event.metaKey || event.ctrlKey || event.altKey) return;
+  const letter = LETTERS.indexOf(event.key.toUpperCase());
+  if (letter >= 0) pick(letter);
+  else if (event.key === "ArrowRight") go(state.current + 1);
+  else if (event.key === "ArrowLeft") go(state.current - 1);
+  else if (event.key.toLowerCase() === "f") toggleFlag();
+});
+
+renderIntroTable();
+if (state.submittedAt) showResults();
+else if (state.startedAt && secondsLeft() === 0) submitExam();
+else if (state.startedAt) showExam();
+</script>
+</body>
+</html>

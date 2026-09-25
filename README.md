@@ -33,8 +33,6 @@ The results screen never says pass or fail. A raw percentage on a mock exam rare
 
 - Claude with code execution enabled. Skills need it on Claude.ai, in Claude Code and on the Claude API.
 - Web search and fetch, so Claude can read the official docs. Without them, Claude marks every answer **Verify in docs** and tells you nothing was checked.
-- Python 3.9 or later to run the build script. Claude's sandbox already has it.
-- Node.js (optional) for `check_page.js`, which confirms the page's script parses.
 
 ## Installation
 
