@@ -4,6 +4,8 @@ A Claude skill that turns a certification's official exam guide into a timed moc
 
 It works for any vendor that publishes an exam outline. It includes notes for Databricks and Microsoft (Azure, Fabric, Power BI). For AWS, Google Cloud, Snowflake and other vendors, it follows a general procedure.
 
+<p align="center"><img src="docs/databricks-example.png" alt="Results screen of a Databricks Data Engineer Associate mock exam" width="800"></p>
+
 ## Contents
 
 - [What you get](#what-you-get)
